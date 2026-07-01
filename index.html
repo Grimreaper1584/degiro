@@ -1,737 +1,1132 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Remmerswaal Security – IT Security voor het MKB</title>
-  <meta name="description" content="Remmerswaal Security biedt vulnerability scans, security audits en IT-advies voor het MKB in Den Haag en omgeving." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000">
+<title>DEGIRO</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;width:100%;overflow:hidden;background:#121212;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
+:root{--blue:#4da6e8;--dark-blue:#2d7fbf;--bg:#121212;--surface:#1e1e1e;--surface2:#252525;--border:#2a2a2a;--text:#ffffff;--muted:#9e9e9e;--green:#4caf50;--red:#ef5350;--accent-blue:#42a5f5;}
 
-    :root {
-      --black:   #0a0c0f;
-      --panel:   #111418;
-      --border:  #1e2329;
-      --muted:   #3a4149;
-      --text:    #c8cdd4;
-      --white:   #eef0f3;
-      --accent:  #00c2ff;
-      --accent2: #0077cc;
-      --danger:  #ff3b3b;
-      --mono: 'IBM Plex Mono', monospace;
-      --sans: 'Inter', sans-serif;
-    }
+/* SCREENS */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;transition:transform 0.3s ease,opacity 0.3s ease;}
+.screen.hidden{display:none;}
+.hidden{display:none!important;}
+.screen.slide-left{transform:translateX(-100%);}
+.screen.slide-right{transform:translateX(100%);}
 
-    html { scroll-behavior: smooth; }
+/* LOGIN */
+#screen-login{background:#121212;justify-content:flex-start;}
+.login-header{background:#121212;padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1a1a1a;}
+.dg-wordmark{display:flex;align-items:center;gap:8px;}
+.dg-bars{display:flex;flex-direction:column;gap:3px;}
+.dg-bars span{display:block;width:22px;height:3px;background:var(--blue);}
+.dg-bars span:nth-child(2){width:16px;}
+.dg-wordmark-text{font-size:22px;font-weight:700;color:#fff;letter-spacing:1px;}
+.login-theme-btn{width:36px;height:36px;border:1px solid #333;border-radius:50%;background:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.login-banner{background:#1a1200;border-left:3px solid #f5a623;margin:12px;border-radius:6px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;}
+.login-banner-icon{font-size:16px;margin-top:1px;}
+.login-banner-text{font-size:12px;color:#ccc;line-height:1.5;}
+.login-banner-text b{color:#f5a623;}
+.login-banner-text a{color:var(--blue);text-decoration:none;}
+.login-user-row{margin:20px 16px 8px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #333;padding-bottom:14px;}
+.login-user-icon{color:var(--blue);font-size:22px;}
+.login-username{font-size:16px;color:#fff;flex:1;}
+.login-dropdown{color:var(--blue);font-size:16px;}
+.login-pin-label{text-align:center;margin:8px 0 16px;font-size:14px;color:var(--muted);}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:28px;}
+.pin-dot{width:48px;height:48px;background:#2a2a2a;border-radius:8px;transition:background 0.15s;}
+.pin-dot.filled{background:#444;}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:0;}
+.numpad-key{background:none;border:none;border-top:1px solid #1e1e1e;color:#fff;font-size:28px;font-weight:300;height:72px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.1s;-webkit-user-select:none;user-select:none;}
+.numpad-key:active{background:#1e1e1e;}
+.numpad-key .sub{display:block;font-size:8px;letter-spacing:2px;color:#888;margin-top:2px;}
+.numpad-fp{font-size:22px;color:#aaa;}
+.numpad-del{font-size:20px;color:#aaa;}
+.forgot-pin{text-align:center;padding:16px;color:var(--blue);font-size:14px;cursor:pointer;}
 
-    body {
-      background: var(--black);
-      color: var(--text);
-      font-family: var(--sans);
-      font-size: 16px;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
+/* TOP BAR */
+.topbar{background:var(--blue);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.topbar-menu{font-size:22px;cursor:pointer;color:#fff;}
+.topbar-center{flex:1;text-align:center;}
+.topbar-title{font-size:17px;font-weight:600;color:#fff;}
+.topbar-subtitle{font-size:12px;color:rgba(255,255,255,0.8);}
+.topbar-value{font-size:17px;font-weight:600;color:#fff;}
+.topbar-badge{display:inline-block;background:#ef5350;color:#fff;border-radius:10px;font-size:10px;padding:1px 6px;font-weight:700;margin-left:2px;}
+.topbar-pill{display:inline-flex;align-items:center;gap:4px;background:#ef5350;border-radius:12px;padding:3px 8px;font-size:12px;font-weight:600;color:#fff;}
+.topbar-pill.green{background:#1a5c1a;}
+.topbar-pill.green .pill-text{color:#4caf50;}
+.pill-text{color:#fff;}
+.topbar-search{color:#fff;font-size:20px;cursor:pointer;margin-left:auto;}
+.topbar-back{color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:4px;}
 
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem;
-      height: 60px;
-      background: rgba(10,12,15,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--white);
-      letter-spacing: 0.04em;
-      text-decoration: none;
-    }
-    .nav-logo span { color: var(--accent); }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a {
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--text);
-      text-decoration: none;
-      letter-spacing: 0.03em;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--accent); }
-    .nav-cta {
-      font-family: var(--mono);
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 0.4rem 1rem;
-      border-radius: 2px;
-      text-decoration: none;
-      transition: background 0.2s, color 0.2s;
-    }
-    .nav-cta:hover { background: var(--accent); color: var(--black); }
+/* ACCOUNT OVERVIEW */
+.account-overview{background:#1a1a1a;padding:14px 16px 10px;}
+.acc-row{display:flex;justify-content:space-between;margin-bottom:10px;}
+.acc-item{}
+.acc-label{font-size:12px;color:var(--muted);margin-bottom:2px;}
+.acc-label.underline{text-decoration:underline;color:var(--muted);}
+.acc-value{font-size:16px;font-weight:600;color:#fff;}
+.acc-value.red{color:var(--red);}
+.acc-value.green{color:var(--green);}
+.acc-info-btn{width:24px;height:24px;border:1.5px solid #555;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;cursor:pointer;}
+.acc-links{display:flex;gap:20px;margin-top:6px;padding-top:10px;border-top:1px solid #2a2a2a;}
+.acc-link{font-size:13px;font-weight:600;color:#fff;cursor:pointer;display:flex;align-items:center;gap:4px;}
+.acc-link span{color:var(--muted);}
 
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh;
-      display: flex; flex-direction: column; justify-content: center;
-      padding: 100px 2rem 60px;
-      max-width: 860px;
-      margin: 0 auto;
-      position: relative;
-    }
-    .hero-tag {
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      color: var(--accent);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
-      display: flex; align-items: center; gap: 0.6rem;
-    }
-    .hero-tag::before {
-      content: '';
-      display: inline-block;
-      width: 24px; height: 1px;
-      background: var(--accent);
-    }
-    h1 {
-      font-family: var(--mono);
-      font-size: clamp(2rem, 5vw, 3.4rem);
-      font-weight: 600;
-      color: var(--white);
-      line-height: 1.15;
-      margin-bottom: 1.5rem;
-      letter-spacing: -0.02em;
-    }
-    h1 em {
-      font-style: normal;
-      color: var(--accent);
-    }
-    .hero-sub {
-      font-size: 1.05rem;
-      color: var(--text);
-      max-width: 560px;
-      margin-bottom: 2.5rem;
-      line-height: 1.75;
-    }
-    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .btn-primary {
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      font-weight: 600;
-      background: var(--accent);
-      color: var(--black);
-      padding: 0.75rem 1.6rem;
-      border-radius: 2px;
-      text-decoration: none;
-      letter-spacing: 0.04em;
-      transition: opacity 0.2s;
-    }
-    .btn-primary:hover { opacity: 0.85; }
-    .btn-ghost {
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text);
-      border: 1px solid var(--muted);
-      padding: 0.75rem 1.6rem;
-      border-radius: 2px;
-      text-decoration: none;
-      letter-spacing: 0.04em;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+/* TABS */
+.tab-bar{display:flex;border-bottom:1px solid #2a2a2a;background:#1a1a1a;flex-shrink:0;}
+.tab{flex:1;padding:12px 8px;text-align:center;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+.tab.active{color:#fff;border-bottom-color:var(--blue);font-weight:600;}
+.tab .new-badge{background:#1a3a5c;color:var(--blue);border-radius:4px;font-size:10px;padding:1px 5px;margin-left:4px;}
+.msg-badge{background:var(--red);color:#fff;border-radius:10px;font-size:10px;padding:1px 6px;font-weight:700;margin-left:4px;}
 
-    /* Scan animation bar */
-    .scan-bar {
-      margin-top: 4rem;
-      height: 2px;
-      background: var(--border);
-      position: relative;
-      overflow: hidden;
-      border-radius: 1px;
-    }
-    .scan-bar::after {
-      content: '';
-      position: absolute;
-      top: 0; left: -40%;
-      width: 40%; height: 100%;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      animation: scan 2.5s linear infinite;
-    }
-    @keyframes scan {
-      to { left: 140%; }
-    }
+/* SCROLL CONTENT */
+.scroll-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.scroll-content::-webkit-scrollbar{display:none;}
 
-    /* ── STATS ── */
-    .stats-row {
-      display: flex; gap: 2.5rem; flex-wrap: wrap;
-      margin-top: 2.5rem;
-    }
-    .stat { display: flex; flex-direction: column; }
-    .stat-num {
-      font-family: var(--mono);
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: var(--white);
-    }
-    .stat-num span { color: var(--accent); }
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-      margin-top: 0.15rem;
-    }
+/* PORTFOLIO */
+.portfolio-section-header{padding:16px 16px 6px;display:flex;align-items:center;justify-content:space-between;}
+.portfolio-section-title{font-size:16px;font-weight:700;color:#fff;}
+.portfolio-col-headers{display:flex;justify-content:space-between;padding:4px 16px 8px;border-bottom:1px solid #2a2a2a;}
+.col-header-left{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.col-header-left span{color:var(--blue);}
+.col-header-right{font-size:12px;color:var(--blue);}
+.portfolio-item{padding:14px 16px;border-bottom:1px solid #1e1e1e;cursor:pointer;}
+.portfolio-item:active{background:#1a1a1a;}
+.pi-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.pi-name{font-size:14px;font-weight:500;color:#fff;max-width:65%;line-height:1.3;}
+.pi-value{font-size:14px;font-weight:600;color:#fff;text-align:right;}
+.pi-bottom{display:flex;justify-content:space-between;margin-top:3px;}
+.pi-meta{font-size:12px;color:var(--muted);}
+.pi-change{font-size:12px;text-align:right;}
+.pi-change.red{color:var(--red);}
+.pi-change.green{color:var(--green);}
+.portfolio-filter-row{padding:10px 16px;display:flex;align-items:center;gap:10px;}
+.filter-pill{background:#2a2a2a;border:1px solid #3a3a3a;border-radius:20px;padding:7px 14px;font-size:13px;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.filter-pill svg{width:12px;height:12px;fill:#fff;}
+.download-btn{margin-left:auto;width:36px;height:36px;border:1.5px solid #3a3a3a;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;}
+.copyright-text{padding:20px 16px;font-size:11px;color:#555;text-align:center;}
+.copyright-text a{color:var(--blue);text-decoration:none;}
 
-    /* ── SECTION BASE ── */
-    section { padding: 80px 2rem; }
-    .container { max-width: 860px; margin: 0 auto; }
-    .section-tag {
-      font-family: var(--mono);
-      font-size: 0.68rem;
-      color: var(--accent);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      margin-bottom: 0.75rem;
-    }
-    h2 {
-      font-family: var(--mono);
-      font-size: clamp(1.4rem, 3vw, 2rem);
-      font-weight: 600;
-      color: var(--white);
-      margin-bottom: 1rem;
-      letter-spacing: -0.01em;
-    }
-    .section-intro {
-      color: var(--text);
-      max-width: 560px;
-      margin-bottom: 3rem;
-      line-height: 1.75;
-    }
+/* BOTTOM NAV */
+.bottom-nav{display:flex;background:#121212;border-top:1px solid #1e1e1e;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom);}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px 6px;cursor:pointer;gap:3px;position:relative;}
+.bn-icon{font-size:22px;color:var(--muted);}
+.bn-icon.active{color:var(--blue);}
+.bn-label{font-size:10px;color:var(--muted);}
+.bn-label.active{color:var(--blue);}
+.bn-plus{width:50px;height:50px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;margin-top:-14px;box-shadow:0 4px 12px rgba(77,166,232,0.4);}
+.bn-badge{position:absolute;top:6px;right:calc(50% - 18px);background:var(--red);color:#fff;border-radius:10px;font-size:9px;padding:1px 5px;font-weight:700;}
 
-    /* ── PROBLEM ── */
-    .problem { background: var(--panel); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .problem-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2.5rem;
-    }
-    .problem-card {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1.5rem;
-      background: var(--black);
-    }
-    .problem-card .icon {
-      font-size: 1.3rem;
-      margin-bottom: 0.75rem;
-    }
-    .problem-card h3 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--white);
-      margin-bottom: 0.5rem;
-    }
-    .problem-card p { font-size: 0.85rem; color: var(--text); line-height: 1.6; }
+/* FAVORIETEN */
+.fav-search{margin:12px 16px;background:#2a2a2a;border-radius:24px;padding:10px 16px;display:flex;align-items:center;gap:10px;}
+.fav-search-icon{color:var(--muted);font-size:18px;}
+.fav-search input{background:none;border:none;outline:none;color:#fff;font-size:14px;flex:1;}
+.fav-search input::placeholder{color:var(--muted);}
+.fav-item{padding:12px 16px;border-bottom:1px solid #1e1e1e;display:flex;align-items:center;gap:12px;cursor:pointer;}
+.fav-star{color:var(--blue);font-size:20px;}
+.fav-info{flex:1;}
+.fav-name{font-size:14px;font-weight:500;color:#fff;line-height:1.3;}
+.fav-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+.fav-right{text-align:right;}
+.fav-price{font-size:14px;font-weight:600;color:#fff;}
+.fav-change{font-size:12px;margin-top:2px;}
+.fav-change.red{color:var(--red);}
+.fav-change.green{color:var(--green);}
 
-    /* ── DIENSTEN ── */
-    .diensten-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-    }
-    .dienst-card {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 2rem 1.5rem;
-      position: relative;
-      transition: border-color 0.2s;
-    }
-    .dienst-card:hover { border-color: var(--accent2); }
-    .dienst-card.featured {
-      border-color: var(--accent);
-    }
-    .featured-badge {
-      position: absolute; top: -1px; right: 1.5rem;
-      font-family: var(--mono);
-      font-size: 0.62rem;
-      font-weight: 600;
-      background: var(--accent);
-      color: var(--black);
-      padding: 0.2rem 0.6rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .dienst-card h3 {
-      font-family: var(--mono);
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--white);
-      margin-bottom: 0.5rem;
-    }
-    .dienst-price {
-      font-family: var(--mono);
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: var(--accent);
-      margin-bottom: 1rem;
-    }
-    .dienst-price small {
-      font-size: 0.75rem;
-      color: var(--muted);
-      font-weight: 400;
-    }
-    .dienst-card ul {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .dienst-card ul li {
-      font-size: 0.83rem;
-      color: var(--text);
-      display: flex; align-items: flex-start; gap: 0.5rem;
-    }
-    .dienst-card ul li::before {
-      content: '→';
-      color: var(--accent);
-      font-family: var(--mono);
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-    .dienst-note {
-      margin-top: 2rem;
-      padding: 1rem 1.25rem;
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--accent);
-      border-radius: 2px;
-      background: var(--panel);
-      font-size: 0.83rem;
-      color: var(--text);
-    }
-    .dienst-note strong { color: var(--white); }
+/* MARKT */
+.markt-tabs{display:flex;border-bottom:1px solid #2a2a2a;padding:0 16px;flex-shrink:0;}
+.markt-tab{padding:12px 16px 12px 0;font-size:14px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-right:8px;}
+.markt-tab.active{color:#fff;border-bottom-color:var(--blue);font-weight:600;}
+.markt-search{margin:12px 16px;background:#2a2a2a;border-radius:24px;padding:10px 16px;display:flex;align-items:center;gap:10px;}
+.markt-search input{background:none;border:none;outline:none;color:#fff;font-size:14px;flex:1;}
+.markt-search input::placeholder{color:var(--muted);}
+.section-title-row{padding:14px 16px 8px;display:flex;align-items:center;gap:10px;}
+.section-icon{font-size:20px;}
+.section-label{font-size:16px;font-weight:600;color:#fff;}
+.section-extra{margin-left:auto;}
+.indices-row{display:flex;gap:10px;padding:0 16px 14px;overflow-x:auto;}
+.indices-row::-webkit-scrollbar{display:none;}
+.index-card{background:#1e1e1e;border-radius:10px;padding:12px 14px;min-width:130px;cursor:pointer;}
+.index-flag{font-size:16px;margin-right:6px;}
+.index-name{font-size:13px;font-weight:600;color:#fff;}
+.index-value{font-size:15px;font-weight:700;color:#fff;margin-top:6px;}
+.index-change{font-size:12px;color:var(--muted);margin-top:2px;}
+.view-toggle{display:flex;background:#2a2a2a;border-radius:20px;padding:3px;}
+.vt-btn{padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12px;color:var(--muted);}
+.vt-btn.active{background:#3a3a3a;color:#fff;}
+.winners-section{padding:0 16px;}
+.winner-item{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #1e1e1e;}
+.winner-name{font-size:14px;color:#fff;}
+.winner-right{text-align:right;}
+.winner-price{font-size:14px;font-weight:600;color:#fff;}
+.winner-change{font-size:12px;color:var(--muted);margin-top:2px;}
+.winner-change.red{color:var(--red);}
+.winner-change.green{color:var(--green);}
 
-    /* ── HOE HET WERKT ── */
-    .hoe { background: var(--panel); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .process-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      margin-top: 2.5rem;
-      position: relative;
-    }
-    .process-steps::before {
-      content: '';
-      position: absolute;
-      left: 19px; top: 0; bottom: 0;
-      width: 1px;
-      background: var(--border);
-    }
-    .step {
-      display: flex; gap: 1.5rem;
-      padding-bottom: 2.5rem;
-      position: relative;
-    }
-    .step:last-child { padding-bottom: 0; }
-    .step-num {
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--black);
-      background: var(--accent);
-      width: 38px; height: 38px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      position: relative;
-      z-index: 1;
-    }
-    .step-body h3 {
-      font-family: var(--mono);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--white);
-      margin-bottom: 0.4rem;
-      padding-top: 0.5rem;
-    }
-    .step-body p { font-size: 0.85rem; color: var(--text); line-height: 1.65; }
+/* MENU DRAWER */
+#screen-menu{background:rgba(0,0,0,0.5);flex-direction:row;}
+.menu-drawer{width:85%;max-width:320px;background:#1a1a1a;height:100%;display:flex;flex-direction:column;overflow-y:auto;}
+.menu-back{padding:16px;display:flex;align-items:center;gap:8px;color:var(--blue);font-size:14px;cursor:pointer;border-bottom:1px solid #2a2a2a;}
+.menu-profile{padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;background:#252525;}
+.menu-avatar{width:40px;height:40px;border-radius:50%;background:#2a3a4a;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:22px;}
+.menu-profile-info{flex:1;}
+.menu-profile-name{font-size:15px;font-weight:600;color:#fff;}
+.menu-profile-sub{font-size:12px;color:var(--muted);}
+.menu-chevron{color:var(--blue);font-size:18px;}
+.menu-item{padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;border-bottom:1px solid #1e1e1e;}
+.menu-item:active{background:#252525;}
+.menu-item-icon{width:28px;height:28px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;}
+.menu-item-text{font-size:14px;color:#fff;flex:1;}
+.menu-item-arrow{color:var(--blue);font-size:16px;}
+.menu-logout{margin:20px 16px;border:1.5px solid #333;border-radius:24px;padding:12px;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;color:#fff;font-size:14px;}
 
-    /* ── REVIEWS ── */
-    .reviews-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-    }
-    .review-card {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1.5rem;
-      background: var(--panel);
-      display: flex; flex-direction: column; gap: 1rem;
-    }
-    .review-stars { color: var(--accent); font-size: 0.85rem; letter-spacing: 0.1em; }
-    .review-text { font-size: 0.85rem; color: var(--text); line-height: 1.65; font-style: italic; }
-    .review-author {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-    .review-author strong { color: var(--white); font-weight: 600; }
-    .reviews-coming {
-      margin-top: 2rem;
-      padding: 1.5rem;
-      border: 1px dashed var(--muted);
-      border-radius: 4px;
-      text-align: center;
-      font-size: 0.83rem;
-      color: var(--muted);
-    }
-    .reviews-coming span { color: var(--accent); font-family: var(--mono); }
+/* EDIT MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;z-index:1000;}
+.modal-sheet{background:#1e1e1e;border-radius:16px 16px 0 0;width:100%;padding:0 0 env(safe-area-inset-bottom);}
+.modal-handle{width:36px;height:4px;background:#444;border-radius:2px;margin:12px auto 8px;}
+.modal-title{font-size:16px;font-weight:700;padding:10px 16px 16px;border-bottom:1px solid #2a2a2a;}
+.modal-body{padding:16px;}
+.modal-label{font-size:12px;color:var(--muted);margin-bottom:6px;}
+.modal-input{width:100%;background:#2a2a2a;border:1px solid #3a3a3a;border-radius:8px;padding:12px 14px;color:#fff;font-size:16px;outline:none;margin-bottom:14px;}
+.modal-input:focus{border-color:var(--blue);}
+.modal-btns{display:flex;gap:10px;padding:0 16px 16px;}
+.modal-btn{flex:1;padding:13px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer;}
+.modal-btn-cancel{background:#2a2a2a;color:#fff;}
+.modal-btn-save{background:var(--blue);color:#fff;}
 
-    /* ── CONTACT ── */
-    .contact { background: var(--panel); border-top: 1px solid var(--border); }
-    .contact-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: start;
-    }
-    .contact-info p { font-size: 0.9rem; color: var(--text); line-height: 1.75; margin-bottom: 1.5rem; }
-    .contact-detail {
-      display: flex; flex-direction: column; gap: 0.75rem;
-    }
-    .contact-detail a {
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      color: var(--accent);
-      text-decoration: none;
-      display: flex; align-items: center; gap: 0.5rem;
-    }
-    .contact-detail a:hover { opacity: 0.8; }
-    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
-    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-    .form-group label {
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      color: var(--muted);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      background: var(--black);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 0.65rem 0.85rem;
-      color: var(--white);
-      font-family: var(--sans);
-      font-size: 0.87rem;
-      outline: none;
-      transition: border-color 0.2s;
-      width: 100%;
-    }
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus { border-color: var(--accent); }
-    .form-group textarea { resize: vertical; min-height: 110px; }
-    .form-group select option { background: var(--black); }
-    .btn-submit {
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      font-weight: 600;
-      background: var(--accent);
-      color: var(--black);
-      border: none;
-      padding: 0.8rem 1.6rem;
-      border-radius: 2px;
-      cursor: pointer;
-      letter-spacing: 0.04em;
-      transition: opacity 0.2s;
-      align-self: flex-start;
-    }
-    .btn-submit:hover { opacity: 0.85; }
+/* ACCOUNT OVERVIEW SCREEN */
+.acc-full-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #1e1e1e;}
+.acc-full-label{font-size:14px;color:var(--muted);}
+.acc-full-label.link{text-decoration:underline;color:var(--muted);}
+.acc-full-value{font-size:14px;font-weight:600;color:#fff;}
+.acc-full-value.red{color:var(--red);}
+.acc-full-value.green{color:var(--green);}
+.acc-full-section{padding:16px 16px 0;}
 
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem;
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 1rem;
-    }
-    .footer-logo {
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-    .footer-logo span { color: var(--accent); }
-    footer p {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
+/* TRANSACTIES */
+.trans-date{padding:12px 16px 6px;font-size:12px;color:var(--muted);font-weight:600;}
+.trans-item{padding:14px 16px;border-bottom:1px solid #1e1e1e;display:flex;align-items:flex-start;gap:12px;cursor:pointer;}
+.trans-type-badge{width:26px;height:26px;border-radius:50%;background:#2a2a2a;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px;}
+.trans-type-badge.K{background:#1a3a1a;color:var(--green);}
+.trans-type-badge.V{background:#3a1a1a;color:var(--red);}
+.trans-info{flex:1;}
+.trans-name{font-size:14px;font-weight:500;color:#fff;line-height:1.3;}
+.trans-meta{font-size:12px;color:var(--muted);margin-top:3px;}
+.trans-amount{font-size:14px;font-weight:600;text-align:right;}
+.trans-amount.neg{color:#fff;}
+.trans-amount.pos{color:var(--green);}
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 640px) {
-      nav { padding: 0 1.25rem; }
-      .nav-links { display: none; }
-      .hero { padding: 90px 1.25rem 50px; }
-      section { padding: 60px 1.25rem; }
-      .contact-inner { grid-template-columns: 1fr; gap: 2.5rem; }
-      footer { flex-direction: column; align-items: flex-start; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .scan-bar::after { animation: none; }
-    }
-  </style>
+/* NOTIFICATION TOAST */
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+</style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a href="#" class="nav-logo">Remmerswaal<span>.</span>Security</a>
-  <ul class="nav-links">
-    <li><a href="#diensten">Diensten</a></li>
-    <li><a href="#hoe">Werkwijze</a></li>
-    <li><a href="#reviews">Reviews</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-  <a href="#contact" class="nav-cta">Gratis scan aanvragen</a>
-</nav>
-
-<!-- HERO -->
-<section class="hero" style="padding-top:120px;">
-  <div class="hero-tag">IT Security voor het MKB · Den Haag</div>
-  <h1>Weet jij of jouw<br/>bedrijf te hacken is<br/>van <em>buitenaf?</em></h1>
-  <p class="hero-sub">
-    De meeste MKB-bedrijven ontdekken kwetsbaarheden pas ná een incident. Remmerswaal Security controleert uw systemen vóór een hacker dat doet — met een helder rapport en concrete oplossingen.
-  </p>
-  <div class="hero-actions">
-    <a href="#contact" class="btn-primary">Vraag een gratis scan aan</a>
-    <a href="#diensten" class="btn-ghost">Bekijk de diensten</a>
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="screen" id="screen-login">
+  <div class="login-header">
+    <div class="dg-wordmark">
+      <div class="dg-bars"><span></span><span></span></div>
+      <div class="dg-wordmark-text">DEGIRO</div>
+    </div>
+    <button class="login-theme-btn" style="font-size:16px;">☀</button>
   </div>
-  <div class="scan-bar" style="margin-top:3rem;"></div>
-  <div class="stats-row">
-    <div class="stat">
-      <span class="stat-num">48<span>u</span></span>
-      <span class="stat-label">Rapport binnen 48 uur</span>
-    </div>
-    <div class="stat">
-      <span class="stat-num">€<span>0</span></span>
-      <span class="stat-label">Kosten eerste scan*</span>
-    </div>
-    <div class="stat">
-      <span class="stat-num">100<span>%</span></span>
-      <span class="stat-label">Geen jargon, wel actie</span>
-    </div>
+  <div class="login-banner">
+    <div class="login-banner-icon">⚠️</div>
+    <div class="login-banner-text"><b>Blijf veilig online</b> <a href="#">Bekijk tips</a> om je online veiligheid te verbeteren en je gegevens te beschermen.</div>
   </div>
-</section>
-
-<!-- PROBLEEM -->
-<section class="problem">
-  <div class="container">
-    <div class="section-tag">Het probleem</div>
-    <h2>Hackers kiezen niet op grootte. Ze kiezen op kwetsbaarheid.</h2>
-    <p class="section-intro">Kleine en middelgrote bedrijven denken vaak dat ze geen doelwit zijn. Dat is precies waarom ze het worden.</p>
-    <div class="problem-grid">
-      <div class="problem-card">
-        <div class="icon">🔓</div>
-        <h3>Verouderde systemen</h3>
-        <p>Bekende beveiligingslekken die nooit zijn gedicht vormen een open deur voor aanvallers.</p>
-      </div>
-      <div class="problem-card">
-        <div class="icon">📋</div>
-        <h3>AVG-verplichtingen</h3>
-        <p>Een datalek kan leiden tot boetes tot €20 miljoen. Voorkomen is goedkoper dan herstellen.</p>
-      </div>
-      <div class="problem-card">
-        <div class="icon">🎯</div>
-        <h3>MKB is populair doelwit</h3>
-        <p>43% van alle cyberaanvallen richt zich op het MKB. Minder beveiliging, meer kans op succes.</p>
-      </div>
-      <div class="problem-card">
-        <div class="icon">⏱️</div>
-        <h3>Gemiddeld 207 dagen</h3>
-        <p>Zo lang duurt het gemiddeld voordat een inbreuk wordt ontdekt. In die tijd loopt alles gewoon door.</p>
-      </div>
-    </div>
+  <div class="login-user-row">
+    <div class="login-user-icon">👤</div>
+    <div class="login-username">robinfinance</div>
+    <div class="login-dropdown">▼</div>
   </div>
-</section>
+  <div class="login-pin-label">Voer je toegangscode in</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="dot0"></div>
+    <div class="pin-dot" id="dot1"></div>
+    <div class="pin-dot" id="dot2"></div>
+    <div class="pin-dot" id="dot3"></div>
+    <div class="pin-dot" id="dot4"></div>
+    <div class="pin-dot" id="dot5"></div>
+  </div>
+  <div class="numpad">
+    <button class="numpad-key" onclick="pinPress('1')">1</button>
+    <button class="numpad-key" onclick="pinPress('2')">2<span class="sub">ABC</span></button>
+    <button class="numpad-key" onclick="pinPress('3')">3<span class="sub">DEF</span></button>
+    <button class="numpad-key" onclick="pinPress('4')">4<span class="sub">GHI</span></button>
+    <button class="numpad-key" onclick="pinPress('5')">5<span class="sub">JKL</span></button>
+    <button class="numpad-key" onclick="pinPress('6')">6<span class="sub">MNO</span></button>
+    <button class="numpad-key" onclick="pinPress('7')">7<span class="sub">PQRS</span></button>
+    <button class="numpad-key" onclick="pinPress('8')">8<span class="sub">TUV</span></button>
+    <button class="numpad-key" onclick="pinPress('9')">9<span class="sub">WXYZ</span></button>
+    <button class="numpad-key" onclick="pinPress('fp')"><span class="numpad-fp">⬡</span></button>
+    <button class="numpad-key" onclick="pinPress('0')">0</button>
+    <button class="numpad-key" onclick="pinPress('del')"><span class="numpad-del">⌫</span></button>
+  </div>
+  <div class="forgot-pin">Toegangscode vergeten?</div>
+</div>
 
-<!-- DIENSTEN -->
-<section id="diensten">
-  <div class="container">
-    <div class="section-tag">Diensten</div>
-    <h2>Wat u van ons kunt verwachten</h2>
-    <p class="section-intro">Geen abonnementen, geen kleine lettertjes. Duidelijke diensten met vaste prijzen.</p>
-    <div class="diensten-grid">
-      <div class="dienst-card">
-        <h3>Basis Externe Scan</h3>
-        <div class="dienst-price">€ 299 <small>/ eenmalig</small></div>
-        <ul>
-          <li>Scan van alle externe IP-adressen</li>
-          <li>Overzicht van open poorten en diensten</li>
-          <li>Gevonden kwetsbaarheden met risicoscore</li>
-          <li>Helder rapport in begrijpelijke taal</li>
-          <li>Prioriteitenlijst: wat eerst aanpakken</li>
-        </ul>
+<!-- ===== MAIN APP SCREEN ===== -->
+<div class="screen hidden" id="screen-main">
+  <!-- TOPBAR -->
+  <div class="topbar" id="main-topbar">
+    <div class="topbar-menu" onclick="openMenu()">☰</div>
+    <div class="topbar-center" id="topbar-center">
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
+        <div class="topbar-value" id="topbar-total">€ 2.302,92</div>
+        <div class="topbar-pill" id="topbar-daypnl"><span class="pill-text">€ -7,23 (-0,31%)</span></div>
+        <span style="color:#fff;font-size:14px;">∨</span>
       </div>
-      <div class="dienst-card featured">
-        <div class="featured-badge">Meest gekozen</div>
-        <h3>Uitgebreide Security Audit</h3>
-        <div class="dienst-price">€ 599 <small>/ eenmalig</small></div>
-        <ul>
-          <li>Alles uit de basis scan</li>
-          <li>Intern netwerk scan (via VPN/on-site)</li>
-          <li>Webapplicatie controle</li>
-          <li>Adviesgesprek na afloop (1 uur)</li>
-          <li>Herstelplan met concrete stappen</li>
-          <li>30 dagen nacontrole via e-mail</li>
-        </ul>
-      </div>
-      <div class="dienst-card">
-        <h3>Security Retainer</h3>
-        <div class="dienst-price">€ 199 <small>/ maand</small></div>
-        <ul>
-          <li>Maandelijkse monitoring van uw systemen</li>
-          <li>Kwartaalrapportage met bevindingen</li>
-          <li>Direct alarm bij kritieke kwetsbaarheden</li>
-          <li>Onbeperkt advies via e-mail</li>
-          <li>Jaarlijkse volledige audit inbegrepen</li>
-        </ul>
-      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.8);margin-top:2px;" id="topbar-sub">0 Openstaand , 0 Uitgevoerd</div>
     </div>
-    <div class="dienst-note">
-      <strong>Gratis pilot scan beschikbaar.</strong> Voor de eerste drie klanten voer ik een gratis externe scan uit in ruil voor een eerlijke review. Interesse? Neem contact op via het formulier hieronder.
+    <div class="topbar-search" onclick="showSearch()">🔍</div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav" id="bottom-nav">
+    <div class="bn-item" onclick="switchTab('markt')" id="bn-markt">
+      <div class="bn-icon" id="bni-markt">📊</div>
+      <div class="bn-label" id="bnl-markt">Markt</div>
+    </div>
+    <div class="bn-item" onclick="switchTab('fav')" id="bn-fav">
+      <div class="bn-icon" id="bni-fav">☆</div>
+      <div class="bn-label" id="bnl-fav">Favorieten</div>
+    </div>
+    <div class="bn-item" onclick="showAddMenu()">
+      <div class="bn-plus">+</div>
+    </div>
+    <div class="bn-item" onclick="switchTab('portfolio')" id="bn-portfolio">
+      <div class="bn-icon" id="bni-portfolio">▣</div>
+      <div class="bn-label" id="bnl-portfolio">Portefeuille</div>
+    </div>
+    <div class="bn-item" onclick="switchTab('inbox')" id="bn-inbox">
+      <div class="bn-icon" id="bni-inbox">✉</div>
+      <div class="bn-label" id="bnl-inbox">Inbox</div>
+      <div class="bn-badge">19</div>
     </div>
   </div>
-</section>
 
-<!-- HOE HET WERKT -->
-<section id="hoe" class="hoe">
-  <div class="container">
-    <div class="section-tag">Werkwijze</div>
-    <h2>Van aanvraag tot rapport in 5 stappen</h2>
-    <p class="section-intro">Geen langdurige trajecten. Geen ellenlange contracten. U weet snel waar u aan toe bent.</p>
-    <div class="process-steps">
-      <div class="step">
-        <div class="step-num">01</div>
-        <div class="step-body">
-          <h3>Vrijblijvend gesprek (15 min)</h3>
-          <p>Kort telefonisch of online overleg om uw situatie te begrijpen. Geen verkooppraatje — gewoon kijken of we iets voor u kunnen betekenen.</p>
-        </div>
+  <!-- TAB CONTENT WRAPPER -->
+  <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+
+    <!-- MARKT TAB -->
+    <div id="tab-markt" class="hidden" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <div class="markt-tabs">
+        <div class="markt-tab active">Markt</div>
+        <div class="markt-tab">Nieuws</div>
+        <div class="markt-tab">Agenda</div>
       </div>
-      <div class="step">
-        <div class="step-num">02</div>
-        <div class="step-body">
-          <h3>Schriftelijke opdrachtbevestiging</h3>
-          <p>U geeft schriftelijk toestemming voor de scan. Exact vastgelegd wat we doen, wat niet, en hoe we met uw data omgaan (AVG-conform).</p>
+      <div class="scroll-content">
+        <div class="markt-search">
+          <span class="fav-search-icon">🔍</span>
+          <input type="text" placeholder="Zoek op naam, ISIN of symbool" oninput="searchMarkt(this.value)">
         </div>
-      </div>
-      <div class="step">
-        <div class="step-num">03</div>
-        <div class="step-body">
-          <h3>Scan uitvoeren</h3>
-          <p>De scan wordt op afstand uitgevoerd. Geen fysieke aanwezigheid nodig. Uw bedrijfsvoering loopt gewoon door.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">04</div>
-        <div class="step-body">
-          <h3>Rapport binnen 48 uur</h3>
-          <p>U ontvangt een helder rapport: wat er gevonden is, hoe ernstig het is, en wat u concreet moet doen. Geen technisch jargon zonder uitleg.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">05</div>
-        <div class="step-body">
-          <h3>Nabespreking en advies</h3>
-          <p>We lopen het rapport samen door. U stelt vragen, ik geef antwoorden. Daarna weet u precies hoe u verder gaat.</p>
+        <div id="markt-body">
+          <div class="section-title-row">
+            <span class="section-icon">📈</span>
+            <span class="section-label">Indices</span>
+            <div class="view-toggle section-extra">
+              <div class="vt-btn active">⊞</div>
+              <div class="vt-btn">☰</div>
+            </div>
+          </div>
+          <div class="indices-row">
+            <div class="index-card">
+              <div><span class="index-flag">🇳🇱</span><span class="index-name">AEX</span></div>
+              <div class="index-value">1.060,73</div>
+              <div class="index-change">0,00%</div>
+            </div>
+            <div class="index-card">
+              <div><span class="index-flag">🇪🇺</span><span class="index-name">Europe 50</span></div>
+              <div class="index-value">6.221,74</div>
+              <div class="index-change">0,00%</div>
+            </div>
+            <div class="index-card">
+              <div><span class="index-flag">🇺🇸</span><span class="index-name">USA 500</span></div>
+              <div class="index-value">7.343,36</div>
+              <div class="index-change">0,00%</div>
+            </div>
+          </div>
+          <div class="section-title-row">
+            <span class="section-icon">💗</span>
+            <span class="section-label">Winners &amp; Losers</span>
+            <div class="view-toggle section-extra" style="background:#2a2a2a;border-radius:20px;padding:5px 12px;font-size:12px;color:#fff;">AEX ∨</div>
+          </div>
+          <div class="winners-section" id="winners-list"></div>
         </div>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- REVIEWS -->
-<section id="reviews">
-  <div class="container">
-    <div class="section-tag">Reviews</div>
-    <h2>Wat klanten zeggen</h2>
-    <p class="section-intro">Eerlijke feedback van echte klanten.</p>
-    <div class="reviews-coming">
-      <span>// Reviews volgen binnenkort</span><br/>
-      <span style="color:var(--text); font-family:var(--sans); font-size:0.83rem;">Bent u geïnteresseerd in een gratis pilot scan? U helpt ons en wij helpen u.</span>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact" class="contact">
-  <div class="container">
-    <div class="section-tag">Contact</div>
-    <h2>Vraag een (gratis) scan aan</h2>
-    <div class="contact-inner">
-      <div class="contact-info">
-        <p>Vul het formulier in en ik neem binnen één werkdag contact met u op. Geen verplichtingen, geen verkoopgesprekken.</p>
-        <div class="contact-detail">
-          <a href="mailto:robin@remmerswaal-security.nl">✉ robin@remmerswaal-security.nl</a>
-          <a href="https://linkedin.com/in/robinremmerswaal" target="_blank">↗ LinkedIn profiel</a>
-        </div>
-        <div style="margin-top:2rem; padding:1rem 1.25rem; border:1px solid var(--border); border-radius:4px; background:var(--black);">
-          <div style="font-family:var(--mono); font-size:0.68rem; color:var(--accent); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem;">Werkgebied</div>
-          <p style="font-size:0.83rem; color:var(--text); margin:0;">Den Haag en omgeving · Heel Nederland mogelijk op afstand</p>
+    <!-- FAVORIETEN TAB -->
+    <div id="tab-fav" class="hidden" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <div style="padding:12px 16px 4px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:18px;font-weight:700;color:#fff;border-bottom:2px solid var(--blue);padding-bottom:8px;">Favorieten</span>
+        <div style="display:flex;gap:14px;color:var(--blue);font-size:20px;">
+          <span style="cursor:pointer;">+</span>
+          <span style="cursor:pointer;">✏</span>
         </div>
       </div>
-      <form class="contact-form" action="https://formspree.io/f/xwvdbwra" method="POST">
-        <div class="form-group">
-          <label>Uw naam</label>
-          <input type="text" name="naam" placeholder="Jan de Vries" required />
+      <div class="fav-search">
+        <span class="fav-search-icon">🔍</span>
+        <input type="text" placeholder="Zoek een product">
+      </div>
+      <div class="scroll-content" id="fav-list"></div>
+      <div class="copyright-text">© 2026 — flatexDEGIRO Bank Dutch Branch. Lees meer over onze <a href="#">Dataleveranciers en bronnen</a></div>
+    </div>
+
+    <!-- PORTFOLIO TAB -->
+    <div id="tab-portfolio" class="hidden" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <div class="account-overview" id="acc-overview">
+        <div class="acc-row">
+          <div class="acc-item">
+            <div class="acc-label">Totaal Account</div>
+            <div class="acc-value" id="acc-total">€ 2.302,92</div>
+          </div>
+          <div class="acc-item" style="text-align:right;">
+            <div class="acc-label">Vrije Ruimte</div>
+            <div class="acc-value" id="acc-vrije">€ 11,25</div>
+          </div>
+          <div class="acc-info-btn">ⓘ</div>
         </div>
-        <div class="form-group">
-          <label>Bedrijfsnaam</label>
-          <input type="text" name="bedrijf" placeholder="De Vries & Partners BV" />
+        <div class="acc-row">
+          <div class="acc-item">
+            <div class="acc-label underline" onclick="showAccountOverview()" style="cursor:pointer;">Portefeuille</div>
+            <div class="acc-value" id="acc-pf">€ 2.291,67</div>
+          </div>
+          <div class="acc-item" style="text-align:right;">
+            <div class="acc-label">EUR</div>
+            <div class="acc-value" id="acc-eur">€ 11,25</div>
+          </div>
+          <div class="acc-info-btn">ⓘ</div>
         </div>
-        <div class="form-group">
-          <label>E-mailadres</label>
-          <input type="email" name="email" placeholder="jan@devries.nl" required />
+        <div class="acc-row" style="margin-bottom:0;">
+          <div class="acc-item">
+            <div class="acc-label">Dag W/V</div>
+            <div class="acc-value red" id="acc-dag">€ -7,23(-0,31%)</div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-label">Totaal W/V</div>
+            <div class="acc-value green" id="acc-twv">€ +100,61</div>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Interesse in</label>
-          <select name="dienst">
-            <option value="">Selecteer een dienst...</option>
-            <option value="gratis-pilot">Gratis pilot scan</option>
-            <option value="basis-scan">Basis Externe Scan (€299)</option>
-            <option value="uitgebreide-audit">Uitgebreide Security Audit (€599)</option>
-            <option value="retainer">Security Retainer (€199/mnd)</option>
-            <option value="advies">Alleen advies / overig</option>
-          </select>
+        <div class="acc-links">
+          <div class="acc-link" onclick="showOrders()">Openstaand <span>(0)</span> ›</div>
+          <div class="acc-link" onclick="showTransacties()">Laatste transacties <span>(0)</span> ›</div>
         </div>
-        <div class="form-group">
-          <label>Bericht (optioneel)</label>
-          <textarea name="bericht" placeholder="Vertel kort over uw situatie of stel een vraag..."></textarea>
+      </div>
+
+      <div class="tab-bar" id="portfolio-tabs">
+        <div class="tab active" onclick="showPortfolioTab('pf')">Portefeuille</div>
+        <div class="tab" onclick="showPortfolioTab('sl')">Securities Lending <span class="new-badge">New</span></div>
+      </div>
+
+      <div class="scroll-content" id="portfolio-content">
+        <div class="portfolio-filter-row">
+          <div class="filter-pill">Open <svg viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z"/></svg></div>
+          <div class="download-btn">⬇</div>
         </div>
-        <button type="submit" class="btn-submit">Verstuur aanvraag →</button>
-      </form>
+        <div id="portfolio-list"></div>
+        <div class="copyright-text">© 2026 — flatexDEGIRO Bank Dutch Branch. Lees meer over onze <a href="#">Dataleveranciers en bronnen</a></div>
+      </div>
+    </div>
+
+    <!-- INBOX TAB -->
+    <div id="tab-inbox" class="hidden" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <div style="padding:16px;border-bottom:1px solid #2a2a2a;flex-shrink:0;">
+        <div class="tab-bar" style="border:none;padding:0;gap:0;">
+          <div class="tab active" style="flex:none;padding:8px 16px 8px 0;">Berichten <span class="msg-badge">19</span></div>
+          <div class="tab" style="flex:none;padding:8px 16px 8px 0;">Orders</div>
+          <div class="tab" style="flex:none;padding:8px 16px 8px 0;">Transacties</div>
+          <div class="tab" style="flex:none;padding:8px 16px 8px 0;">Rekeningoverzicht</div>
+        </div>
+      </div>
+      <div class="scroll-content" id="trans-content">
+        <div id="trans-list"></div>
+      </div>
+    </div>
+
+  </div><!-- end tab content wrapper -->
+</div><!-- end screen-main -->
+
+<!-- ===== MENU DRAWER ===== -->
+<div class="screen hidden" id="screen-menu">
+  <div class="menu-drawer">
+    <div class="menu-back" onclick="closeMenu()">‹ Terug</div>
+    <div class="menu-profile">
+      <div class="menu-avatar">👤</div>
+      <div class="menu-profile-info">
+        <div class="menu-profile-name">Robin Remmerswaal</div>
+        <div class="menu-profile-sub">RobinFinance – Basic</div>
+      </div>
+      <div class="menu-chevron">›</div>
+    </div>
+    <div class="menu-item" style="background:#1a3a5c;" onclick="closeMenu()">
+      <div class="menu-item-icon" style="background:transparent;font-size:20px;">⬆⬇</div>
+      <div class="menu-item-text" style="color:var(--blue);font-weight:600;">Geld in- &amp; uitboeken</div>
+      <div class="menu-item-arrow">›</div>
+    </div>
+    <div class="menu-item" onclick="openEditModal()">
+      <div class="menu-item-icon">⚙</div>
+      <div class="menu-item-text">Portefeuille bewerken</div>
+      <div class="menu-item-arrow">›</div>
+    </div>
+    <div class="menu-item" onclick="openSettings()">
+      <div class="menu-item-icon">⚙</div>
+      <div class="menu-item-text">Instellingen</div>
+      <div class="menu-item-arrow">›</div>
+    </div>
+    <div class="menu-item" onclick="closeMenu()">
+      <div class="menu-item-icon">🌙</div>
+      <div class="menu-item-text">Thema</div>
+      <div class="menu-item-arrow">›</div>
+    </div>
+    <div class="menu-item" onclick="closeMenu()">
+      <div class="menu-item-icon">?</div>
+      <div class="menu-item-text">Help</div>
+      <div class="menu-item-arrow">›</div>
+    </div>
+    <div class="menu-item" onclick="closeMenu()">
+      <div class="menu-item-icon">💬</div>
+      <div class="menu-item-text">Beoordeel je ervaring</div>
+      <div class="menu-item-arrow">›</div>
+    </div>
+    <div style="flex:1;"></div>
+    <div class="menu-logout" onclick="logout()">
+      <span>⬡</span> Uitloggen
     </div>
   </div>
-</section>
+  <div style="flex:1;" onclick="closeMenu()"></div>
+</div>
 
-<!-- FOOTER -->
-<footer>
-  <span class="footer-logo">Remmerswaal<span>.</span>Security</span>
-  <p>© 2026 Remmerswaal Security · Den Haag · robin@remmerswaal-security.nl</p>
-</footer>
+<!-- ===== ACCOUNT OVERVIEW SCREEN ===== -->
+<div class="screen hidden" id="screen-account">
+  <div class="topbar">
+    <div class="topbar-menu" onclick="closeAccount()">☰</div>
+    <div class="topbar-center">
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+        <span style="color:rgba(255,255,255,0.6);font-size:13px;">👁</span>
+        <span style="font-size:16px;font-weight:600;">Account overzicht</span>
+        <span style="font-size:14px;">∧</span>
+      </div>
+    </div>
+    <div class="topbar-search">🔍</div>
+  </div>
+  <div class="scroll-content">
+    <div class="acc-full-section">
+      <div class="acc-full-row">
+        <span class="acc-full-label">Totaal Account</span>
+        <span class="acc-full-value" id="acs-total">€ 2.302,92</span>
+      </div>
+      <div class="acc-full-row">
+        <span class="acc-full-label">Vrije Ruimte</span>
+        <span class="acc-full-value" id="acs-vrije">€ 11,25</span>
+      </div>
+      <div class="acc-full-row">
+        <span class="acc-full-label link">Portefeuille</span>
+        <span class="acc-full-value" id="acs-pf">€ 2.291,67</span>
+      </div>
+      <div class="acc-full-row">
+        <span class="acc-full-label">EUR</span>
+        <span class="acc-full-value" id="acs-eur">€ 11,25</span>
+      </div>
+      <div class="acc-full-row">
+        <span class="acc-full-label">Dag W/V</span>
+        <span class="acc-full-value red" id="acs-dag">€ -7,23(-0,31%)</span>
+      </div>
+      <div class="acc-full-row">
+        <span class="acc-full-label">Totaal W/V</span>
+        <span class="acc-full-value green" id="acs-twv">€ +100,61</span>
+      </div>
+    </div>
+    <div style="padding:16px;display:flex;gap:16px;">
+      <div onclick="showOrders()" style="font-size:13px;font-weight:600;color:#fff;cursor:pointer;">Openstaand (0) ›</div>
+      <div onclick="showTransacties()" style="font-size:13px;font-weight:600;color:#fff;cursor:pointer;">Laatste transacties (0) ›</div>
+    </div>
+    <div class="tab-bar" style="background:#1a1a1a;">
+      <div class="tab active">Portefeuille</div>
+      <div class="tab">Securities Lending <span class="new-badge">New</span></div>
+    </div>
+    <div id="acc-portfolio-list" style="padding:0;"></div>
+    <div class="copyright-text">© 2026 — flatexDEGIRO Bank Dutch Branch. Lees meer over onze <a href="#">Dataleveranciers en bronnen</a></div>
+  </div>
+</div>
 
+<!-- ===== SETTINGS SCREEN ===== -->
+<div class="screen hidden" id="screen-settings">
+  <div class="topbar">
+    <div class="topbar-back" onclick="closeSettings()">‹ Terug</div>
+    <div class="topbar-center"><span style="font-size:16px;font-weight:600;">Instellingen</span></div>
+    <div style="width:20px;"></div>
+  </div>
+  <div class="scroll-content">
+    <div class="acc-full-section">
+      <div class="menu-item"><div class="menu-item-icon">👤</div><div class="menu-item-text">Profiel</div><div class="menu-item-arrow">›</div></div>
+      <div class="menu-item"><div class="menu-item-icon">🔒</div><div class="menu-item-text">Beveiliging &amp; inloggen</div><div class="menu-item-arrow">›</div></div>
+      <div class="menu-item"><div class="menu-item-icon">🔔</div><div class="menu-item-text">Meldingen</div><div class="menu-item-arrow">›</div></div>
+      <div class="menu-item"><div class="menu-item-icon">🌐</div><div class="menu-item-text">Taal</div><div class="menu-item-arrow">›</div></div>
+      <div class="menu-item" style="border-bottom:none;">
+        <div class="menu-item-icon">ⓘ</div>
+        <div class="menu-item-text">Over deze app</div>
+      </div>
+      <div style="padding:4px 16px 24px;">
+        <div id="settings-version" onclick="devTap()" style="font-size:11px;color:#555;-webkit-user-select:none;user-select:none;cursor:default;">Versie 3.42.1</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EDIT PORTFOLIO MODAL ===== -->
+<div class="modal-overlay hidden" id="edit-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Portefeuille bewerken</div>
+    <div class="modal-body" id="edit-modal-body"></div>
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn-cancel" onclick="closeEditModal()">Annuleren</button>
+      <button class="modal-btn modal-btn-save" onclick="savePortfolio()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== STATE =====
+const PIN = '045410';
+let pinBuffer = '';
+
+const state = {
+  totaalAccount: 2302.92,
+  vrijeRuimte: 11.25,
+  portefeuille: 2291.67,
+  eur: 11.25,
+  dagWV: -7.23,
+  dagWVpct: -0.31,
+  totaalWV: 100.61,
+  currentTab: 'portfolio',
+
+  holdings: [
+    {
+      category: 'Aandelen',
+      items: [
+        { name:'Space Exploration Technologies Corp Class A', exchange:'NDQ', symbol:'SPCX', currency:'$', price:152.74, qty:12, dagChange:-0.49, dagChangePct:-0.32 }
+      ]
+    },
+    {
+      category: "Trackers (ETF's)",
+      items: [
+        { name:'Invesco EQQQ NASDAQ-100 UCITS ETF Acc', exchange:'TDG', symbol:'EQQB', currency:'€', price:435.90, qty:1, dagChange:0, dagChangePct:0 },
+        { name:'Vanguard S&P 500 UCITS ETF USD Acc', exchange:'TDG', symbol:'VUAA', currency:'€', price:123.92, qty:2, dagChange:0, dagChangePct:0 }
+      ]
+    }
+  ],
+
+  favorieten: [
+    { name:'Invesco EQQQ NASDAQ-100 UCITS ETF Acc', exchange:'TDG', symbol:'EQQB', currency:'€', price:435.90, change:0, changePct:0 },
+    { name:'NVIDIA Corp', exchange:'NDQ', symbol:'NVDA', currency:'$', price:null, change:null, changePct:null },
+    { name:'Space Exploration Technologies Corp Class A', exchange:'NDQ', symbol:'SPCX', currency:'$', price:152.74, change:-0.49, changePct:-0.32 },
+    { name:'Vanguard FTSE All-World UCITS - (USD) Accumulating ETF', exchange:'TDG', symbol:'VWCE', currency:'€', price:null, change:null, changePct:null },
+    { name:'Vanguard S&P 500 UCITS ETF USD Acc', exchange:'TDG', symbol:'VUAA', currency:'€', price:123.92, change:0, changePct:0 }
+  ],
+
+  transactions: [
+    { date:'2026-06-25', type:'K', name:'Space Exploration Technologies Corp Class A', meta:'Koop | 15:45 St. 3 @ $ 154,41', amount:-463.23, currency:'$' },
+    { date:'2026-06-25', type:'K', name:'Vanguard S&P 500 UCITS ETF USD Acc', meta:'Koop | 08:26 St. 1 @ € 125,99', amount:-125.99, currency:'€' },
+    { date:'2026-06-25', type:'K', name:'Invesco EQQQ NASDAQ-100 UCITS ETF Acc', meta:'Koop | 08:26 St. 1 @ € 450,00', amount:-450.00, currency:'€' },
+    { date:'2026-06-22', type:'V', name:'Vanguard S&P 500 UCITS ETF USD Acc', meta:'Verkoop | 10:12 St. 1 @ € 126,20', amount:126.20, currency:'€' }
+  ]
+};
+
+// ===== PIN LOGIN =====
+function pinPress(key) {
+  if(key === 'fp') return;
+  if(key === 'del') {
+    if(pinBuffer.length > 0) {
+      pinBuffer = pinBuffer.slice(0,-1);
+      updateDots();
+    }
+    return;
+  }
+  if(pinBuffer.length >= 6) return;
+  pinBuffer += key;
+  updateDots();
+  if(pinBuffer.length === 6) {
+    setTimeout(() => checkPin(), 80);
+  }
+}
+
+function updateDots() {
+  for(let i=0;i<6;i++){
+    document.getElementById('dot'+i).classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+
+function checkPin() {
+  if(pinBuffer === PIN) {
+    document.getElementById('screen-login').classList.add('hidden');
+    document.getElementById('screen-main').classList.remove('hidden');
+    switchTab('portfolio');
+    renderAll();
+  } else {
+    pinBuffer = '';
+    updateDots();
+    showToast('Onjuiste toegangscode');
+    document.querySelectorAll('.pin-dot').forEach(d => {
+      d.style.background='#ef5350';
+      setTimeout(()=>d.style.background='',500);
+    });
+  }
+}
+
+// ===== TABS =====
+function switchTab(tab) {
+  ['markt','fav','portfolio','inbox'].forEach(t => {
+    document.getElementById('tab-'+t).classList.add('hidden');
+    document.getElementById('bni-'+t).classList.remove('active');
+    document.getElementById('bnl-'+t).classList.remove('active');
+  });
+  document.getElementById('tab-'+tab).classList.remove('hidden');
+  document.getElementById('bni-'+tab).classList.add('active');
+  document.getElementById('bnl-'+tab).classList.add('active');
+  state.currentTab = tab;
+
+  const topbarCenter = document.getElementById('topbar-center');
+  if(tab === 'portfolio') {
+    topbarCenter.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
+        <div class="topbar-value" id="topbar-total">${fmtEur(state.totaalAccount)}</div>
+        <div class="topbar-pill ${state.dagWV>=0?'green':''}" id="topbar-daypnl"><span class="pill-text">€ ${state.dagWV>=0?'+':''}${fmtNum(state.dagWV)} (${fmtPct(state.dagWVpct)}%)</span></div>
+        <span style="color:#fff;font-size:14px;">∨</span>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.8);margin-top:2px;">0 Openstaand , 0 Uitgevoerd</div>`;
+    renderPortfolio();
+  } else if(tab === 'inbox') {
+    topbarCenter.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;gap:8px;">
+      <div class="topbar-value">${fmtEur(state.totaalAccount)}</div>
+      <div class="topbar-pill"><span class="pill-text">€ ${fmtNum(state.dagWV)} (${fmtPct(state.dagWVpct)}%)</span></div>
+      <span style="color:#fff;font-size:14px;">∨</span>
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.8);margin-top:2px;">0 Openstaand , 0 Uitgevoerd</div>`;
+    renderTransacties();
+  }
+}
+
+// ===== FORMAT HELPERS =====
+function fmtEur(n) {
+  return '€ ' + Math.abs(n).toLocaleString('nl-NL', {minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function fmtNum(n) {
+  if(n===null||n===undefined) return '—';
+  return (n<0?'-':'')+Math.abs(n).toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function fmtPct(n) {
+  if(n===null||n===undefined) return '—';
+  return (n>0?'+':'')+n.toFixed(2);
+}
+
+// ===== RENDER PORTFOLIO =====
+function renderPortfolio() {
+  // update overview numbers
+  document.getElementById('acc-total').textContent = fmtEur(state.totaalAccount);
+  document.getElementById('acc-vrije').textContent = fmtEur(state.vrijeRuimte);
+  document.getElementById('acc-pf').textContent = fmtEur(state.portefeuille);
+  document.getElementById('acc-eur').textContent = fmtEur(state.eur);
+  const dagEl = document.getElementById('acc-dag');
+  dagEl.textContent = `€ ${state.dagWV>=0?'+':''}${fmtNum(state.dagWV)}(${fmtPct(state.dagWVpct)}%)`;
+  dagEl.className = 'acc-value ' + (state.dagWV>=0?'green':'red');
+  document.getElementById('acc-twv').textContent = `€ ${state.totaalWV>=0?'+':''}${fmtNum(state.totaalWV)}`;
+
+  let html = '';
+  state.holdings.forEach(cat => {
+    html += `<div class="portfolio-section-header"><span class="portfolio-section-title">${cat.category}</span></div>`;
+    html += `<div class="portfolio-col-headers">
+      <div class="col-header-left">↓ Koers × <span>Aantal</span></div>
+      <div class="col-header-right">Dag +/-</div>
+    </div>`;
+    cat.items.forEach((item,idx) => {
+      const val = item.price * item.qty;
+      const absChange = item.dagChange * item.qty;
+      const pos = item.dagChangePct >= 0;
+      html += `<div class="portfolio-item" onclick="openEditItem(${state.holdings.indexOf(cat)},${idx})">
+        <div class="pi-top">
+          <div class="pi-name">${item.name}</div>
+          <div class="pi-value">${item.currency} ${fmtNum(val)}</div>
+        </div>
+        <div class="pi-bottom">
+          <div class="pi-meta">${item.exchange} | ${item.currency} ${fmtNum(item.price)} × ${item.qty}</div>
+          <div class="pi-change ${pos&&item.dagChangePct!==0?'green':item.dagChangePct!==0?'red':''}">
+            ${item.dagChangePct!==0?(item.dagChange>=0?'':'')+fmtNum(absChange):'0,00'}<br>
+            (${item.dagChangePct!==0?fmtPct(item.dagChangePct)+'%':'0,00%'})
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+  document.getElementById('portfolio-list').innerHTML = html;
+}
+
+function renderAll() {
+  renderPortfolio();
+  renderFavorieten();
+  renderWinners();
+  renderTransacties();
+}
+
+// ===== FAVORIETEN =====
+function renderFavorieten() {
+  let html = '';
+  state.favorieten.forEach(f => {
+    const hasPrice = f.price !== null;
+    const pos = f.changePct > 0;
+    const neg = f.changePct < 0;
+    html += `<div class="fav-item">
+      <div class="fav-star">★</div>
+      <div class="fav-info">
+        <div class="fav-name">${f.name}</div>
+        <div class="fav-meta">${f.exchange} | ${f.symbol}</div>
+      </div>
+      <div class="fav-right">
+        <div class="fav-price">${hasPrice?f.currency+' '+fmtNum(f.price):f.currency+' —'}</div>
+        <div class="fav-change ${neg?'red':pos?'green':''}">
+          ${hasPrice&&f.changePct!==0?(neg?'':'')+fmtNum(f.change)+' '+fmtPct(f.changePct)+'%':'— —%'}
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('fav-list').innerHTML = html;
+}
+
+// ===== MARKT WINNERS =====
+const AEX_STOCKS = [
+  {name:'Aegon Ltd',price:7.446,change:0},{name:'Koninklijke Ahold Delhaize NV',price:35.43,change:0},
+  {name:'Akzo Nobel NV',price:60.34,change:0},{name:'DSM-Firmenich AG',price:79.98,change:0},
+  {name:'RELX PLC',price:27.44,change:0},{name:'Heineken NV',price:74.00,change:0}
+];
+function renderWinners() {
+  let html = '';
+  AEX_STOCKS.forEach(s => {
+    html += `<div class="winner-item">
+      <div class="winner-name">${s.name}</div>
+      <div class="winner-right">
+        <div class="winner-price">${fmtNum(s.price)}</div>
+        <div class="winner-change">${s.change===0?'0,00%':fmtPct(s.change)+'%'}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('winners-list').innerHTML = html;
+}
+
+function searchMarkt(val) {
+  if(!val) { renderWinners(); return; }
+  const q = val.toLowerCase();
+  const all = [...state.holdings.flatMap(c=>c.items), ...state.favorieten];
+  const unique = {};
+  all.forEach(i=>unique[i.symbol]=i);
+  const results = Object.values(unique).filter(i=>i.name.toLowerCase().includes(q)||i.symbol.toLowerCase().includes(q));
+  let html = '';
+  results.forEach(s => {
+    html += `<div class="winner-item">
+      <div>
+        <div class="winner-name">${s.name}</div>
+        <div style="font-size:11px;color:var(--muted)">${s.exchange} | ${s.symbol}</div>
+      </div>
+      <div class="winner-right">
+        <div class="winner-price">${s.price?s.currency+' '+fmtNum(s.price):'—'}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('winners-list').innerHTML = html || '<div style="padding:20px 16px;color:var(--muted)">Geen resultaten</div>';
+}
+
+// ===== TRANSACTIES =====
+function renderTransacties() {
+  let html = '';
+  let lastDate = '';
+  state.transactions.forEach(t => {
+    if(t.date !== lastDate) {
+      html += `<div class="trans-date">${t.date}</div>`;
+      lastDate = t.date;
+    }
+    const pos = t.amount > 0;
+    html += `<div class="trans-item">
+      <div class="trans-type-badge ${t.type}">${t.type}</div>
+      <div class="trans-info">
+        <div class="trans-name">${t.name}</div>
+        <div class="trans-meta">${t.meta}</div>
+      </div>
+      <div class="trans-amount ${pos?'pos':'neg'}">${t.currency} ${pos?'':'-'}${Math.abs(t.amount).toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+    </div>`;
+  });
+  document.getElementById('trans-list').innerHTML = html;
+}
+
+// ===== MENU =====
+function openMenu() {
+  document.getElementById('screen-menu').classList.remove('hidden');
+}
+function closeMenu() {
+  document.getElementById('screen-menu').classList.add('hidden');
+}
+function logout() {
+  closeMenu();
+  pinBuffer = '';
+  updateDots();
+  document.getElementById('screen-main').classList.add('hidden');
+  document.getElementById('screen-login').classList.remove('hidden');
+}
+
+// ===== SETTINGS =====
+function openSettings() {
+  closeMenu();
+  document.getElementById('screen-settings').classList.remove('hidden');
+}
+function closeSettings() {
+  document.getElementById('screen-settings').classList.add('hidden');
+}
+
+// Tik 7x op het versienummer in Instellingen om de winstcijfers handmatig te bewerken.
+let devTapCount = 0;
+let devTapTimer = null;
+function devTap() {
+  devTapCount++;
+  clearTimeout(devTapTimer);
+  devTapTimer = setTimeout(() => { devTapCount = 0; }, 1500);
+  if(devTapCount >= 7) {
+    devTapCount = 0;
+    openProfitModal();
+  }
+}
+
+function openProfitModal() {
+  const modal = document.getElementById('edit-modal');
+  document.getElementById('edit-modal-body').innerHTML = `
+    <div class="modal-label">Dag W/V (€)</div>
+    <input class="modal-input" id="pf-dag" type="number" step="0.01" value="${state.dagWV}">
+    <div class="modal-label">Dag W/V (%)</div>
+    <input class="modal-input" id="pf-dagpct" type="number" step="0.01" value="${state.dagWVpct}">
+    <div class="modal-label">Totaal W/V (€)</div>
+    <input class="modal-input" id="pf-twv" type="number" step="0.01" value="${state.totaalWV}">
+  `;
+  modal.dataset.mode = 'profit';
+  document.querySelector('.modal-title').textContent = 'Resultaten aanpassen';
+  modal.classList.remove('hidden');
+}
+
+function saveProfitOverride() {
+  const dag = parseFloat(document.getElementById('pf-dag').value);
+  const dagpct = parseFloat(document.getElementById('pf-dagpct').value);
+  const twv = parseFloat(document.getElementById('pf-twv').value);
+  state.dagWV = isNaN(dag) ? state.dagWV : dag;
+  state.dagWVpct = isNaN(dagpct) ? state.dagWVpct : dagpct;
+  state.totaalWV = isNaN(twv) ? state.totaalWV : twv;
+  closeEditModal();
+  refreshAll();
+  showToast('Opgeslagen ✓');
+}
+
+// ===== ACCOUNT OVERVIEW =====
+function showAccountOverview() {
+  document.getElementById('acs-total').textContent = fmtEur(state.totaalAccount);
+  document.getElementById('acs-vrije').textContent = fmtEur(state.vrijeRuimte);
+  document.getElementById('acs-pf').textContent = fmtEur(state.portefeuille);
+  document.getElementById('acs-eur').textContent = fmtEur(state.eur);
+  const dagEl = document.getElementById('acs-dag');
+  dagEl.textContent = `€ ${state.dagWV>=0?'+':''}${fmtNum(state.dagWV)}(${fmtPct(state.dagWVpct)}%)`;
+  dagEl.className = 'acc-full-value ' + (state.dagWV>=0?'green':'red');
+  document.getElementById('acs-twv').textContent = `€ ${state.totaalWV>=0?'+':''}${fmtNum(state.totaalWV)}`;
+
+  // render portfolio in account overview
+  let html = '';
+  state.holdings.forEach(cat => {
+    html += `<div class="portfolio-section-header"><span class="portfolio-section-title">${cat.category}</span></div>`;
+    html += `<div class="portfolio-col-headers"><div class="col-header-left">↓ Koers × <span>Aantal</span></div><div class="col-header-right">Dag +/-</div></div>`;
+    cat.items.forEach(item => {
+      const val = item.price * item.qty;
+      const pos = item.dagChangePct >= 0;
+      html += `<div class="portfolio-item">
+        <div class="pi-top"><div class="pi-name">${item.name}</div><div class="pi-value">${item.currency} ${fmtNum(val)}</div></div>
+        <div class="pi-bottom">
+          <div class="pi-meta">${item.exchange} | ${item.currency} ${fmtNum(item.price)} × ${item.qty}</div>
+          <div class="pi-change ${pos&&item.dagChangePct!==0?'green':item.dagChangePct!==0?'red':''}">
+            ${item.dagChangePct!==0?fmtNum(item.dagChange*item.qty):'0,00'}<br>(${item.dagChangePct!==0?fmtPct(item.dagChangePct)+'%':'0,00%'})
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+  document.getElementById('acc-portfolio-list').innerHTML = html;
+  document.getElementById('screen-account').classList.remove('hidden');
+}
+function closeAccount() {
+  document.getElementById('screen-account').classList.add('hidden');
+}
+
+function showOrders() {
+  closeAccount();
+  switchTab('inbox');
+}
+function showTransacties() {
+  closeAccount();
+  switchTab('inbox');
+}
+function showPortfolioTab(t) {}
+function showSearch() {}
+function showAddMenu() {}
+
+// ===== EDIT PORTFOLIO ITEM =====
+function openEditItem(catIdx, itemIdx) {
+  const item = state.holdings[catIdx].items[itemIdx];
+  const modal = document.getElementById('edit-modal');
+  document.getElementById('edit-modal-body').innerHTML = `
+    <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">${item.name}</div>
+    <div class="modal-label">Koers (${item.currency})</div>
+    <input class="modal-input" id="edit-price" type="number" step="0.01" value="${item.price}">
+    <div class="modal-label">Aantal stuks</div>
+    <input class="modal-input" id="edit-qty" type="number" step="1" min="0" value="${item.qty}">
+    <div class="modal-label">Dag verandering (${item.currency})</div>
+    <input class="modal-input" id="edit-change" type="number" step="0.01" value="${item.dagChange}">
+    <div class="modal-label">Dag verandering (%)</div>
+    <input class="modal-input" id="edit-changepct" type="number" step="0.01" value="${item.dagChangePct}">
+  `;
+  modal.dataset.cat = catIdx;
+  modal.dataset.item = itemIdx;
+  modal.dataset.mode = 'item';
+  document.querySelector('.modal-title').textContent = 'Positie bewerken';
+  modal.classList.remove('hidden');
+}
+
+function savePortfolioItem() {
+  const modal = document.getElementById('edit-modal');
+  const catIdx = parseInt(modal.dataset.cat);
+  const itemIdx = parseInt(modal.dataset.item);
+  const item = state.holdings[catIdx].items[itemIdx];
+  item.price = parseFloat(document.getElementById('edit-price').value) || item.price;
+  item.qty = parseInt(document.getElementById('edit-qty').value) || item.qty;
+  item.dagChange = parseFloat(document.getElementById('edit-change').value);
+  item.dagChangePct = parseFloat(document.getElementById('edit-changepct').value);
+  recalcTotals();
+  closeEditModal();
+  refreshAll();
+  showToast('Opgeslagen ✓');
+}
+
+// ===== EDIT FULL PORTFOLIO MODAL (from menu) =====
+function openEditModal() {
+  closeMenu();
+  const modal = document.getElementById('edit-modal');
+  let html = '';
+
+  // Account numbers
+  html += `<div style="font-weight:600;margin-bottom:12px;color:var(--blue);">Account bedragen</div>`;
+  html += `<div class="modal-label">Vrije Ruimte (€)</div><input class="modal-input" id="me-vrije" type="number" step="0.01" value="${state.vrijeRuimte}">`;
+  html += `<div style="font-size:12px;color:var(--muted);margin:-6px 0 14px;">Totaal Account en Portefeuille worden automatisch berekend uit koers × aantal van je posities.</div>`;
+
+  html += `<div style="font-weight:600;margin:16px 0 12px;color:var(--blue);border-top:1px solid #2a2a2a;padding-top:14px;">Posities</div>`;
+
+  state.holdings.forEach((cat,ci) => {
+    html += `<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:8px;">${cat.category}</div>`;
+    cat.items.forEach((item,ii) => {
+      html += `<div style="background:#2a2a2a;border-radius:8px;padding:12px;margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${item.name} (${item.symbol})</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div>
+            <div class="modal-label">Koers (${item.currency})</div>
+            <input class="modal-input" id="ei-price-${ci}-${ii}" type="number" step="0.01" value="${item.price}" style="margin-bottom:0;">
+          </div>
+          <div>
+            <div class="modal-label">Aantal</div>
+            <input class="modal-input" id="ei-qty-${ci}-${ii}" type="number" step="1" value="${item.qty}" style="margin-bottom:0;">
+          </div>
+          <div>
+            <div class="modal-label">Dag (${item.currency})</div>
+            <input class="modal-input" id="ei-chg-${ci}-${ii}" type="number" step="0.01" value="${item.dagChange}" style="margin-bottom:0;">
+          </div>
+          <div>
+            <div class="modal-label">Dag %</div>
+            <input class="modal-input" id="ei-pct-${ci}-${ii}" type="number" step="0.01" value="${item.dagChangePct}" style="margin-bottom:0;">
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+
+  document.getElementById('edit-modal-body').innerHTML = html;
+  modal.dataset.cat = '-1';
+  modal.dataset.mode = 'full';
+  document.querySelector('.modal-title').textContent = 'Portefeuille bewerken';
+  modal.classList.remove('hidden');
+}
+
+function savePortfolio() {
+  const modal = document.getElementById('edit-modal');
+  if(modal.dataset.mode === 'profit') {
+    saveProfitOverride();
+    return;
+  }
+  if(modal.dataset.cat === '-1') {
+    // full edit
+    state.vrijeRuimte = parseFloat(document.getElementById('me-vrije').value) || state.vrijeRuimte;
+
+    state.holdings.forEach((cat,ci) => {
+      cat.items.forEach((item,ii) => {
+        const price = parseFloat(document.getElementById(`ei-price-${ci}-${ii}`).value);
+        const qty = parseInt(document.getElementById(`ei-qty-${ci}-${ii}`).value);
+        const chg = parseFloat(document.getElementById(`ei-chg-${ci}-${ii}`).value);
+        const pct = parseFloat(document.getElementById(`ei-pct-${ci}-${ii}`).value);
+        if(!isNaN(price)) item.price = price;
+        if(!isNaN(qty)) item.qty = qty;
+        item.dagChange = isNaN(chg)?0:chg;
+        item.dagChangePct = isNaN(pct)?0:pct;
+      });
+    });
+    recalcTotals();
+  } else {
+    savePortfolioItem(); return;
+  }
+  closeEditModal();
+  refreshAll();
+  showToast('Portefeuille bijgewerkt ✓');
+}
+
+// Portefeuille (som van koers x aantal) + vrije ruimte bepalen automatisch het totaalbedrag.
+function recalcTotals() {
+  state.portefeuille = state.holdings.reduce(
+    (sum, cat) => sum + cat.items.reduce((s, item) => s + item.price * item.qty, 0),
+    0
+  );
+  state.eur = state.vrijeRuimte;
+  state.totaalAccount = state.portefeuille + state.vrijeRuimte;
+}
+
+function refreshAll() {
+  switchTab(state.currentTab);
+  if(!document.getElementById('screen-account').classList.contains('hidden')) {
+    showAccountOverview();
+  }
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.add('hidden');
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// Init
+switchTab('portfolio');
+</script>
 </body>
 </html>
